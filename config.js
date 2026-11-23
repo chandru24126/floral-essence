@@ -1,7 +1,7 @@
 // Edit these values. Only the PUBLIC anon key goes here, never the service_role key.
 window.CFG = {
-  SUPABASE_URL: "https://YOUR-PROJECT.supabase.co",
-  SUPABASE_ANON_KEY: "YOUR-ANON-PUBLIC-KEY",
+  SUPABASE_URL: "https://oxqtvzrhenjbaxdbyjim.supabase.co/rest/v1/",
+  SUPABASE_ANON_KEY: "sb_publishable_cbjAH_DGZ7DkCFfj0ssLgA_Xq4_ASLr",
   SHOP_UPI_ID: "yourname@bank",            // used in Phase 2 (UPI QR)
   NAME: "Floral Essence Studio",
   PHONE: "+91 93606 36917",
