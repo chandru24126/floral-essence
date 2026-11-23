@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Floral Essence Studio</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@700&family=Nunito:wght@400;700;800&display=swap">
+<style>
+:root{--ink:#3B2A2A;--mute:#6B5555;--rose:#C4504A;--rose2:#A63D38;--blush:#FDE8E0;--peach:#F9D3C0;--leaf:#4F7A4B;--bg:#FFF7F2;--line:#E5C3B8}
+*{box-sizing:border-box}body{margin:0;font-family:Nunito,system-ui,sans-serif;color:var(--ink);background:var(--bg);overflow-x:hidden}
+h1,h2,.hd{font-family:Caveat,cursive;font-weight:700;margin:0;line-height:1.05}h1{font-size:clamp(36px,7vw,60px)}h2{font-size:30px}
+a{color:var(--rose2)}.wrap{max-width:1000px;margin:auto;padding:16px 16px 160px;position:relative;z-index:1}
+.btn,.b2,.chip,.nv{display:inline-flex;align-items:center;justify-content:center;min-height:48px;padding:0 22px;border-radius:999px;font:800 16px Nunito,sans-serif;text-decoration:none;cursor:pointer;border:2px solid var(--rose)}
+.btn{background:var(--rose);color:#fff;animation:pl 2.4s ease-in-out infinite}.b2{background:#fff;color:var(--rose2)}
+.chip{min-height:44px;padding:0 16px;font-size:14px;background:#fff;border-color:var(--line);color:var(--ink)}.chip.on{background:var(--rose);color:#fff;border-color:var(--rose)}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}.col{display:flex;flex-direction:column;gap:14px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:14px}
+.card{background:#fff;border-radius:20px;box-shadow:0 4px 14px rgba(196,80,74,.14);overflow:hidden;transition:transform .3s}.card:hover{transform:translateY(-4px)}
+.ph{height:150px;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,var(--blush),var(--peach))}.ph img{width:100%;height:100%;object-fit:cover}
+.pad{padding:10px 12px 12px}.mt{color:var(--mute);font-size:13px}
+.fl{width:56px;height:56px;border-radius:50%;background:radial-gradient(circle,#F2B84B 0 22%,transparent 23%),radial-gradient(circle at 50% 12%,#F4A9A0 0 22%,transparent 23%),radial-gradient(circle at 88% 40%,#F4A9A0 0 22%,transparent 23%),radial-gradient(circle at 74% 86%,#F4A9A0 0 22%,transparent 23%),radial-gradient(circle at 26% 86%,#F4A9A0 0 22%,transparent 23%),radial-gradient(circle at 12% 40%,#F4A9A0 0 22%,transparent 23%);animation:sw 5s ease-in-out infinite}
+.hero{display:flex;gap:24px;align-items:center;flex-wrap:wrap;background:linear-gradient(135deg,var(--peach),var(--blush));border-radius:28px;padding:24px}.hero img{width:150px;height:150px;border-radius:50%;object-fit:cover;border:5px solid #fff;animation:sw 6s ease-in-out infinite}
+.mq{overflow:hidden;margin:18px -16px}.tr{display:flex;gap:14px;width:max-content;padding-left:16px;animation:mv 28s linear infinite}.mq:hover .tr{animation-play-state:paused}
+.ad{position:relative;width:280px;height:150px;border-radius:22px;overflow:hidden;background:linear-gradient(135deg,var(--peach),#F4A9A0);flex:none}.ad img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.ad div{position:absolute;left:10px;right:10px;bottom:10px;background:rgba(255,255,255,.92);border-radius:14px;padding:8px 12px}
+.in{display:block;width:100%;min-height:48px;padding:12px;border:1.5px solid var(--line);border-radius:14px;font:16px Nunito,sans-serif;background:#fff;margin-top:6px}label.lb{font-weight:800;font-size:15px}
+.nav{position:fixed;left:0;right:0;bottom:0;z-index:20;display:flex;background:#fff;border-top:1px solid var(--line);padding:4px 6px calc(4px + env(safe-area-inset-bottom))}
+.nv{flex:1;flex-direction:column;border:0;min-height:56px;padding:0;border-radius:12px;font-size:12px;color:var(--mute);position:relative;gap:2px}.nv.on{color:var(--rose2);background:var(--blush)}
+.nv svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.bdg{position:absolute;top:2px;left:calc(50% + 6px);background:var(--rose);color:#fff;border-radius:99px;font-size:11px;min-width:18px;padding:1px 5px;text-align:center}
+.wa{position:fixed;right:16px;bottom:84px;z-index:30;width:56px;height:56px;border-radius:50%;background:#1F7A4D;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 16px rgba(0,0,0,.25)}.wa svg{width:30px;height:30px;fill:none;stroke:#fff;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.note{background:#FEF3C7;color:#78350F;border-radius:14px;padding:12px;font-size:14px}.ok{background:#E4EFE0;color:#2F5A2B}
+.err{background:#FEE2E2;color:#7F1D1D}.pt{position:fixed;top:-30px;width:14px;height:18px;border-radius:70% 0 70% 0;background:#F4A9A0;opacity:.6;animation:fall 11s linear infinite;z-index:0;pointer-events:none}
+footer{margin-top:28px;padding:18px;border-radius:22px;background:var(--blush);font-size:14px}footer a{font-weight:800}
+.tot{display:flex;justify-content:space-between}.tag{background:var(--blush);border-radius:99px;padding:4px 12px;font-weight:800;font-size:13px}
+a:focus-visible,button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible{outline:3px solid var(--leaf);outline-offset:2px}
+@keyframes sw{50%{transform:rotate(12deg) scale(1.07)}}@keyframes pl{50%{box-shadow:0 0 0 9px rgba(196,80,74,.14)}}
+@keyframes fall{to{transform:translate(40px,115vh) rotate(320deg)}}@keyframes mv{to{transform:translateX(-50%)}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div id="app" class="wrap"></div>
+<a class="wa" id="wa" target="_blank" rel="noopener" aria-label="Chat with us on WhatsApp"><svg viewBox="0 0 24 24"><path d="M12 3a9 9 0 0 0-7.8 13.5L3 21l4.6-1.2A9 9 0 1 0 12 3z"/><path d="M9 8.5c0 3.5 3 6.5 6.5 6.5l1-1.5-2-1-1 .8c-1-.4-2-1.4-2.4-2.4l.8-1-1-2z"/></svg></a>
+<nav class="nav" id="nav" aria-label="Main"></nav>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+<script src="config.js"></script>
+<script>
+const C=window.CFG,$=s=>document.querySelector(s);let sb=null,user=null,products=[];
+try{sb=supabase.createClient(C.SUPABASE_URL,C.SUPABASE_ANON_KEY)}catch(e){}
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const money=n=>'Rs. '+Number(n).toLocaleString('en-IN');
+let cart=[];try{cart=JSON.parse(localStorage.getItem('fe_cart')||'[]')}catch(e){}
+const qty=()=>cart.reduce((a,i)=>a+i.qty,0),sub=()=>cart.reduce((a,i)=>a+i.qty*i.price,0),fee=()=>qty()>5?200:100;
+const save=()=>{try{localStorage.setItem('fe_cart',JSON.stringify(cart))}catch(e){};drawNav()};
+const wa='https://wa.me/'+C.WHATSAPP+'?text='+encodeURIComponent('Hi Floral Essence Studio, I want to know about ');$('#wa').href=wa;
+const POL='No return after delivery. If the product is damaged, call '+C.PHONE+'. Cancel only within 10 minutes, for Cash on Delivery orders only. UPI orders cannot be cancelled.';
+const IC={Home:'<path d="M3 11l9-8 9 8v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/>',Shop:'<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>',Cart:'<circle cx="9" cy="20" r="1.5"/><circle cx="18" cy="20" r="1.5"/><path d="M2 3h3l2.5 12h11L21 7H6"/>',Orders:'<path d="M6 2h9l4 4v16H6z"/><path d="M9 11h7M9 15h7"/>',Profile:'<circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/>'};
+const R={Home:'/',Shop:'/shop',Cart:'/cart',Orders:'/orders',Profile:'/profile'};
+function drawNav(){const cur=location.hash.slice(1)||'/';$('#nav').innerHTML=Object.keys(R).map(k=>`<a class="nv ${cur===R[k]?'on':''}" href="#${R[k]}"><svg viewBox="0 0 24 24" aria-hidden="true">${IC[k]}</svg>${k}${k==='Cart'&&qty()?`<span class="bdg">${qty()}</span>`:''}</a>`).join('')}
+const img=p=>p.images&&p.images[0]?`<img src="${esc(p.images[0])}" alt="${esc(p.name)}">`:'<div class="fl"></div>';
+const card=p=>`<a class="card" href="#/p/${p.id}" style="text-decoration:none;color:inherit"><div class="ph">${img(p)}</div><div class="pad"><div style="font-weight:800">${esc(p.name)}</div><div class="mt">${esc(p.category)}</div><strong>${money(p.price)}</strong>${p.in_stock?'':' <span class="mt">Out of stock</span>'}</div></a>`;
+const foot=()=>`<footer><div class="row" style="justify-content:space-between"><div><strong class="hd" style="font-size:26px">${esc(C.NAME)}</strong><div>${esc(C.ADDRESS)}</div><div>Customer care: <a href="tel:${esc(C.PHONE.replace(/ /g,''))}">${esc(C.PHONE)}</a></div></div><div class="row"><a href="${esc(C.INSTAGRAM)}" target="_blank" rel="noopener">Instagram</a><a href="${wa}" target="_blank" rel="noopener">WhatsApp</a></div></div><p class="mt" style="margin-bottom:0">${esc(POL)} Delivery: Rs. 100, or Rs. 200 for more than 5 items.</p></footer>`;
+const prof=()=>{try{return JSON.parse(localStorage.getItem('fe_prof')||'{}')}catch(e){return{}}};
+const gbtn=`<button class="b2" onclick="signIn()">Continue with Google</button>`;
+async function signIn(){if(!sb)return alert('Add your Supabase details in config.js');await sb.auth.signInWithOAuth({provider:'google',options:{redirectTo:location.origin+location.pathname}})}
+async function signOut(){await sb.auth.signOut();user=null;route()}
+function add(id,q=1){const p=products.find(x=>x.id===id);if(!p||!p.in_stock)return;const i=cart.find(x=>x.id===id);i?i.qty=Math.min(50,i.qty+q):cart.push({id,name:p.name,price:p.price,qty:q});save();location.hash='#/cart'}
+function chg(id,d){const i=cart.find(x=>x.id===id);if(!i)return;i.qty+=d;if(i.qty<1)cart=cart.filter(x=>x.id!==id);save();route()}
+const V={
+'/':()=>{const ads=C.ADS.map(a=>`<div class="ad"><img src="${esc(a.img)}" alt="" onerror="this.remove()"><div><strong class="hd" style="font-size:24px">${esc(a.title)}</strong><br><span class="mt">${esc(a.sub)}</span> <a href="${wa}" target="_blank" rel="noopener">Order now</a></div></div>`).join('');
+return `<section class="hero"><img src="${esc(C.LOGO)}" alt="${esc(C.NAME)} logo"><div class="col" style="flex:1;min-width:230px"><span class="tag" style="align-self:flex-start">Handmade in India</span><h1>Handmade florals for little princesses</h1><div>Baby headbands, floral headbands and hair accessories. Shipping across the globe.</div><div class="row"><a class="btn" href="#/shop">Shop now</a><a class="b2" href="${wa}" target="_blank" rel="noopener">Custom order</a></div></div></section>
+<div class="mq" aria-label="Offers"><div class="tr">${ads}${ads}</div></div>
+<div class="row">${C.CATEGORIES.map(c=>`<a class="chip" href="#/shop?c=${encodeURIComponent(c)}">${esc(c)}</a>`).join('')}</div>
+<h2 style="margin:22px 0 12px">Our favourites</h2><div class="grid">${products.slice(0,4).map(card).join('')||'<p class="mt">Products will appear here soon.</p>'}</div>`+foot()},
+'/shop':q=>{const c=q.get('c')||'',s=(q.get('s')||'').toLowerCase();const list=products.filter(p=>(!c||p.category===c)&&(!s||(p.name+p.category).toLowerCase().includes(s)));
+return `<h1>Shop</h1><div style="margin:12px 0"><label class="lb" for="s">Search</label><input class="in" id="s" value="${esc(q.get('s')||'')}" placeholder="Headbands, clips, crowns" oninput="clearTimeout(window.t);window.t=setTimeout(()=>{location.hash='#/shop?s='+encodeURIComponent(this.value)+'&c=${encodeURIComponent(c)}'},400)"></div>
+<div class="row" style="margin-bottom:14px"><a class="chip ${c?'':'on'}" href="#/shop">All</a>${C.CATEGORIES.map(x=>`<a class="chip ${c===x?'on':''}" href="#/shop?c=${encodeURIComponent(x)}">${esc(x)}</a>`).join('')}</div>
+<div class="grid">${list.map(card).join('')||'<p class="mt">No products found. Try another search.</p>'}</div>`+foot()},
+'/p':(q,id)=>{const p=products.find(x=>x.id===id);if(!p)return '<h1>Product not found</h1><a class="btn" href="#/shop">Back to shop</a>';
+const more=(p.images||[]).slice(1).map(u=>`<img src="${esc(u)}" alt="" style="width:72px;height:72px;object-fit:cover;border-radius:12px">`).join('');
+return `<a href="#/shop">Back to shop</a><div class="row" style="align-items:flex-start;margin-top:12px"><div style="flex:1;min-width:260px"><div class="ph card" style="height:340px">${img(p)}</div><div class="row" style="margin-top:8px">${more}</div></div><div class="col" style="flex:1;min-width:260px"><span class="tag" style="align-self:flex-start">Handmade</span><h1>${esc(p.name)}</h1><strong style="font-size:26px">${money(p.price)}</strong><div>${esc(p.description)}</div><div class="note">${esc(POL)}</div>${p.in_stock?`<button class="btn" onclick="add('${p.id}')">Add to cart</button>`:'<div class="note err">Out of stock</div>'}<a class="b2" href="${wa}${encodeURIComponent(p.name)}" target="_blank" rel="noopener">Custom colour? WhatsApp us</a></div></div>`+foot()},
+'/cart':()=>{if(!cart.length)return '<h1>Your cart</h1><p>Your cart is empty.</p><a class="btn" href="#/shop">Start shopping</a>';
+return `<h1>Your cart</h1><div class="col" style="margin-top:14px">${cart.map(i=>`<div class="card row" style="padding:12px;justify-content:space-between"><div><strong>${esc(i.name)}</strong><div class="mt">${money(i.price)} each</div></div><div class="row"><button class="chip" aria-label="Decrease quantity of ${esc(i.name)}" onclick="chg('${i.id}',-1)">-</button><strong>${i.qty}</strong><button class="chip" aria-label="Increase quantity of ${esc(i.name)}" onclick="chg('${i.id}',1)">+</button></div></div>`).join('')}
+<div class="tot"><span>Subtotal</span><span>${money(sub())}</span></div><div class="tot"><span>Delivery <span class="mt">(${qty()>5?'more than 5 items':'5 items or fewer'})</span></span><span>${money(fee())}</span></div><div class="tot" style="font-size:22px;font-weight:800"><span>Total</span><span>${money(sub()+fee())}</span></div><a class="btn" href="#/checkout">Checkout</a></div>`},
+'/checkout':()=>{if(!cart.length)return '<h1>Checkout</h1><p>Your cart is empty.</p><a class="btn" href="#/shop">Start shopping</a>';const p=prof();
+const f=(id,l,v,a='')=>`<div><label class="lb" for="${id}">${l}</label><input class="in" id="${id}" value="${esc(v||'')}" ${a}></div>`;
+return `<h1>Checkout</h1><div class="col" style="margin-top:14px">${user?'':`<div class="note ok">Sign in to save your details and see your orders. Or continue as a guest.<div style="margin-top:8px">${gbtn}</div></div>`}
+${f('n','Full name',p.name||user?.user_metadata?.full_name,'autocomplete="name"')}${f('ph','Phone number (10 digits)',p.phone,'type="tel" inputmode="numeric" maxlength="10" autocomplete="tel"')}
+<div><label class="lb" for="ad">Delivery address</label><textarea class="in" id="ad" rows="3">${esc(p.address||'')}</textarea></div>
+${f('st','State',p.state||'Maharashtra')}${f('pc','Pincode',p.pincode,'inputmode="numeric" maxlength="6"')}
+<fieldset style="border:0;padding:0;margin:0"><legend class="lb">Payment method</legend><label class="chip" style="justify-content:flex-start;margin:6px 0"><input type="radio" name="pm" value="UPI" checked>&nbsp;UPI (QR code)</label><label class="chip" style="justify-content:flex-start"><input type="radio" name="pm" value="COD">&nbsp;Cash on delivery</label></fieldset>
+<div class="tot" style="font-size:20px;font-weight:800"><span>Total (incl. delivery ${money(fee())})</span><span>${money(sub()+fee())}</span></div><div class="note">${esc(POL)}</div><div id="e"></div><button class="btn" id="go" onclick="place()">Place order</button></div>`},
+'/orders':()=>{setTimeout(loadOrders,0);return '<h1>Your orders</h1><div id="ol" class="col" style="margin-top:14px">Loading...</div>'},
+'/profile':()=>{const p=prof();if(!user)return `<h1>Profile</h1><p>Sign in to save your details and see your orders.</p>${gbtn}`+foot();
+return `<h1>Profile</h1><div class="col" style="margin-top:14px"><div><strong>${esc(user.user_metadata?.full_name||'')}</strong><div class="mt">${esc(user.email)}</div></div>
+<div><label class="lb" for="pp">Saved phone</label><input class="in" id="pp" value="${esc(p.phone||'')}" maxlength="10" inputmode="numeric"></div><div><label class="lb" for="pa">Saved address</label><textarea class="in" id="pa" rows="3">${esc(p.address||'')}</textarea></div>
+<button class="btn" onclick="saveProf()">Save details</button><button class="b2" onclick="signOut()">Sign out</button></div>`+foot()}};
+function saveProf(){try{localStorage.setItem('fe_prof',JSON.stringify({...prof(),phone:$('#pp').value.trim(),address:$('#pa').value.trim()}))}catch(e){}alert('Saved')}
+const st=o=>`<div class="card" style="padding:14px"><div class="row" style="justify-content:space-between"><strong>${esc(o.order_no)}</strong><span class="tag">${esc(o.delivery_status)}</span></div><div>${(o.items||o.order_items||[]).map(i=>esc(i.name)+' x '+i.qty).join(', ')}</div><div class="mt">${esc(o.payment_method)} &middot; ${esc(o.payment_status)} &middot; ${money(o.total)}</div></div>`;
+async function loadOrders(){const el=$('#ol');if(!el)return;if(!sb){el.textContent='Add your Supabase details in config.js';return}
+if(user){const{data,error}=await sb.from('orders').select('*,order_items(name,qty)').order('created_at',{ascending:false});el.innerHTML=error?`<div class="note err">Could not load orders.</div>`:(data.map(st).join('')||'<p>No orders yet.</p>')+`<div class="note">${esc(POL)}</div>`;return}
+el.innerHTML=`<div class="note ok">Sign in to see all your orders.<div style="margin-top:8px">${gbtn}</div></div><h2>Track an order</h2><div><label class="lb" for="to">Order ID</label><input class="in" id="to" placeholder="FE1001"></div><div><label class="lb" for="tp">Phone number</label><input class="in" id="tp" inputmode="numeric" maxlength="10"></div><button class="btn" onclick="track()">Track order</button><div id="tr"></div>`}
+async function track(){const{data,error}=await sb.rpc('track_order',{p_order_no:$('#to').value,p_phone:$('#tp').value.trim()});$('#tr').innerHTML=error?'<div class="note err">Could not check. Try again.</div>':data?st(data):'<div class="note err">No order found. Check the Order ID and phone number.</div>'}
+async function place(){const v=id=>$('#'+id).value.trim(),e=$('#e'),b=$('#go');e.innerHTML='';
+if(!sb){e.innerHTML='<div class="note err">Add your Supabase details in config.js</div>';return}
+if(!/^[6-9]\d{9}$/.test(v('ph'))){e.innerHTML='<div class="note err">Enter a valid 10-digit phone number.</div>';return}
+if(!/^\d{6}$/.test(v('pc'))||v('n').length<2||v('ad').length<8){e.innerHTML='<div class="note err">Check your name, full address and 6-digit pincode.</div>';return}
+b.disabled=true;b.textContent='Placing order...';
+const{data,error}=await sb.rpc('place_order',{p_items:cart.map(i=>({id:i.id,qty:i.qty})),p_name:v('n'),p_phone:v('ph'),p_address:v('ad'),p_state:v('st'),p_pincode:v('pc'),p_method:document.querySelector('input[name=pm]:checked').value});
+if(error){e.innerHTML=`<div class="note err">${esc(error.message)}</div>`;b.disabled=false;b.textContent='Place order';return}
+try{localStorage.setItem('fe_prof',JSON.stringify({name:v('n'),phone:v('ph'),address:v('ad'),state:v('st'),pincode:v('pc')}))}catch(x){}
+cart=[];save();$('#app').innerHTML=`<h1>Order placed</h1><div class="col" style="margin-top:14px"><div class="card" style="padding:16px"><strong style="font-size:22px">${esc(data.order_no)}</strong><div>Total ${money(data.total)} (delivery ${money(data.delivery_fee)}) &middot; ${esc(data.payment_method)}</div></div>${data.payment_method==='UPI'?'<div class="note">UPI payment: the QR code and UPI Ref No step is added in Phase 2. Your order is saved as awaiting payment.</div>':'<div class="note ok">Pay in cash when your order arrives. You can cancel within 10 minutes (Phase 2).</div>'}<div class="note">${esc(POL)}</div><a class="btn" href="#/orders">View my orders</a></div>`}
+async function route(){const h=location.hash.slice(1)||'/',[path,qs]=h.split('?'),parts=path.split('/').filter(Boolean),key='/'+(parts[0]||''),q=new URLSearchParams(qs||'');
+$('#app').innerHTML=(V[key]||V['/'])(q,parts[1]);drawNav();window.scrollTo(0,0)}
+(async()=>{for(let i=0;i<7;i++){const s=document.createElement('span');s.className='pt';s.style.left=(8+i*14)+'%';s.style.animationDelay=(i*1.6)+'s';document.body.appendChild(s)}
+if(sb){const{data:s}=await sb.auth.getSession();user=s.session?.user||null;sb.auth.onAuthStateChange((_e,x)=>{user=x?.user||null;route()});
+const{data}=await sb.from('products').select('*').order('created_at',{ascending:false});products=data||[]}
+window.addEventListener('hashchange',route);route()})();
+</script>
+</body>
+</html>
