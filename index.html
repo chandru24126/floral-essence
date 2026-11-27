@@ -44,6 +44,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,textarea:focus-visible,
 <a class="wa" id="wa" target="_blank" rel="noopener" aria-label="Chat with us on WhatsApp"><svg viewBox="0 0 24 24"><path d="M12 3a9 9 0 0 0-7.8 13.5L3 21l4.6-1.2A9 9 0 1 0 12 3z"/><path d="M9 8.5c0 3.5 3 6.5 6.5 6.5l1-1.5-2-1-1 .8c-1-.4-2-1.4-2.4-2.4l.8-1-1-2z"/></svg></a>
 <nav class="nav" id="nav" aria-label="Main"></nav>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script src="config.js"></script>
 <script>
 const C=window.CFG,$=s=>document.querySelector(s);let sb=null,user=null,products=[];
@@ -97,11 +98,11 @@ return `<h1>Profile</h1><div class="col" style="margin-top:14px"><div><strong>${
 <div><label class="lb" for="pp">Saved phone</label><input class="in" id="pp" value="${esc(p.phone||'')}" maxlength="10" inputmode="numeric"></div><div><label class="lb" for="pa">Saved address</label><textarea class="in" id="pa" rows="3">${esc(p.address||'')}</textarea></div>
 <button class="btn" onclick="saveProf()">Save details</button><button class="b2" onclick="signOut()">Sign out</button></div>`+foot()}};
 function saveProf(){try{localStorage.setItem('fe_prof',JSON.stringify({...prof(),phone:$('#pp').value.trim(),address:$('#pa').value.trim()}))}catch(e){}alert('Saved')}
-const st=o=>`<div class="card" style="padding:14px"><div class="row" style="justify-content:space-between"><strong>${esc(o.order_no)}</strong><span class="tag">${esc(o.delivery_status)}</span></div><div>${(o.items||o.order_items||[]).map(i=>esc(i.name)+' x '+i.qty).join(', ')}</div><div class="mt">${esc(o.payment_method)} &middot; ${esc(o.payment_status)} &middot; ${money(o.total)}</div></div>`;
+const st=o=>`<div class="card" style="padding:14px"><div class="row" style="justify-content:space-between"><strong>${esc(o.order_no)}</strong><span class="tag">${esc(o.delivery_status)}</span></div><div>${(o.items||o.order_items||[]).map(i=>esc(i.name)+' x '+i.qty).join(', ')}</div><div class="mt">${esc(o.payment_method)} &middot; ${esc(o.payment_status)} &middot; ${money(o.total)}${o.upi_ref?'<br>UPI Ref No: '+esc(o.upi_ref):''}</div>${act(o)}</div>`;
 async function loadOrders(){const el=$('#ol');if(!el)return;if(!sb){el.textContent='Add your Supabase details in config.js';return}
 if(user){const{data,error}=await sb.from('orders').select('*,order_items(name,qty)').order('created_at',{ascending:false});el.innerHTML=error?`<div class="note err">Could not load orders.</div>`:(data.map(st).join('')||'<p>No orders yet.</p>')+`<div class="note">${esc(POL)}</div>`;return}
 el.innerHTML=`<div class="note ok">Sign in to see all your orders.<div style="margin-top:8px">${gbtn}</div></div><h2>Track an order</h2><div><label class="lb" for="to">Order ID</label><input class="in" id="to" placeholder="FE1001"></div><div><label class="lb" for="tp">Phone number</label><input class="in" id="tp" inputmode="numeric" maxlength="10"></div><button class="btn" onclick="track()">Track order</button><div id="tr"></div>`}
-async function track(){const{data,error}=await sb.rpc('track_order',{p_order_no:$('#to').value,p_phone:$('#tp').value.trim()});$('#tr').innerHTML=error?'<div class="note err">Could not check. Try again.</div>':data?st(data):'<div class="note err">No order found. Check the Order ID and phone number.</div>'}
+async function track(){const{data,error}=await sb.rpc('track_order',{p_order_no:$('#to').value,p_phone:$('#tp').value.trim()});$('#tr').innerHTML=error?'<div class="note err">Could not check. Try again.</div>':data?st({...data,phone:$('#tp').value.trim()}):'<div class="note err">No order found. Check the Order ID and phone number.</div>'}
 async function place(){const v=id=>$('#'+id).value.trim(),e=$('#e'),b=$('#go');e.innerHTML='';
 if(!sb){e.innerHTML='<div class="note err">Add your Supabase details in config.js</div>';return}
 if(!/^[6-9]\d{9}$/.test(v('ph'))){e.innerHTML='<div class="note err">Enter a valid 10-digit phone number.</div>';return}
@@ -110,7 +111,26 @@ b.disabled=true;b.textContent='Placing order...';
 const{data,error}=await sb.rpc('place_order',{p_items:cart.map(i=>({id:i.id,qty:i.qty})),p_name:v('n'),p_phone:v('ph'),p_address:v('ad'),p_state:v('st'),p_pincode:v('pc'),p_method:document.querySelector('input[name=pm]:checked').value});
 if(error){e.innerHTML=`<div class="note err">${esc(error.message)}</div>`;b.disabled=false;b.textContent='Place order';return}
 try{localStorage.setItem('fe_prof',JSON.stringify({name:v('n'),phone:v('ph'),address:v('ad'),state:v('st'),pincode:v('pc')}))}catch(x){}
-cart=[];save();$('#app').innerHTML=`<h1>Order placed</h1><div class="col" style="margin-top:14px"><div class="card" style="padding:16px"><strong style="font-size:22px">${esc(data.order_no)}</strong><div>Total ${money(data.total)} (delivery ${money(data.delivery_fee)}) &middot; ${esc(data.payment_method)}</div></div>${data.payment_method==='UPI'?'<div class="note">UPI payment: the QR code and UPI Ref No step is added in Phase 2. Your order is saved as awaiting payment.</div>':'<div class="note ok">Pay in cash when your order arrives. You can cancel within 10 minutes (Phase 2).</div>'}<div class="note">${esc(POL)}</div><a class="btn" href="#/orders">View my orders</a></div>`}
+cart=[];save();const o={order_no:data.order_no,total:data.total,payment_method:data.payment_method,payment_status:data.payment_method==='COD'?'Cash pending':'Awaiting payment',delivery_status:'Placed',created_at:new Date().toISOString(),phone:v('ph')};$('#app').innerHTML=`<h1>Order placed</h1><div class="col" style="margin-top:14px"><div class="card" style="padding:16px"><strong style="font-size:22px">${esc(data.order_no)}</strong><div>Total ${money(data.total)} (delivery ${money(data.delivery_fee)}) &middot; ${esc(data.payment_method)}</div></div>${act(o)}${data.payment_method==='COD'?'<div class="note ok">Pay in cash when your order arrives.</div>':''}<div class="note">${esc(POL)}</div><a class="btn" href="#/orders">View my orders</a></div>`}
+
+function act(o){const ph=String(o.phone||'').replace(/\D/g,'');let h='';
+if(o.payment_method==='UPI'&&['Awaiting payment','Rejected'].includes(o.payment_status)){
+const u='upi://pay?pa='+encodeURIComponent(C.SHOP_UPI_ID)+'&pn='+encodeURIComponent(C.NAME)+'&am='+o.total+'&cu=INR&tn='+encodeURIComponent(o.order_no);
+h+=`<div class="col" style="margin-top:10px">${o.payment_status==='Rejected'?'<div class="note err">Payment could not be verified. Pay again and enter the correct UPI Ref No.</div>':''}<div class="qr" data-u="${esc(u)}" style="align-self:center;background:#fff;padding:12px;border-radius:16px"></div><div class="mt" style="text-align:center">Scan with any UPI app. The amount ${money(o.total)} is already filled.</div><a class="b2" href="${esc(u)}">Open UPI app</a><div><label class="lb" for="r-${o.order_no}">After paying, enter UPI Ref No</label><input class="in" id="r-${o.order_no}" inputmode="numeric" maxlength="12" placeholder="UPI Ref No (12 digits)"><div class="mt" style="margin-top:6px">12 digits. Find it in your bank SMS or UPI app.</div></div><button class="btn" onclick="sendRef('${o.order_no}','${ph}')">I have paid</button><div id="m-${o.order_no}"></div></div>`}
+if(o.payment_method==='UPI'&&o.payment_status==='Verification pending')h+='<div class="note" style="margin-top:10px">Payment under verification. We match your UPI Ref No with our bank. This can take a few minutes.</div>';
+if(o.payment_method==='COD'&&o.delivery_status==='Placed'){const end=new Date(o.created_at).getTime()+600000;if(end>Date.now())h+=`<div class="note ok" style="margin-top:10px">You can cancel within 10 minutes. Time left: <strong class="cd" data-end="${end}"></strong> <button class="b2" style="margin-top:8px" onclick="cancelO('${o.order_no}','${ph}')">Cancel order</button></div>`}
+return h}
+async function sendRef(no,ph){const m=$('#m-'+no),r=$('#r-'+no).value.trim();
+if(!/^\d{12}$/.test(r)){m.innerHTML='<div class="note err">Enter exactly 12 digits (numbers only).</div>';return}
+const{error}=await sb.rpc('submit_upi_ref',{p_order_no:no,p_phone:ph,p_ref:r});
+if(error){m.innerHTML=`<div class="note err">${esc(error.message)}</div>`;return}
+m.innerHTML='<div class="note ok">Thank you. We received your UPI Ref No. Payment verification is pending.</div>';if(user&&location.hash==='#/orders')loadOrders()}
+async function cancelO(no,ph){if(!confirm('Cancel order '+no+'?'))return;
+const{error}=await sb.rpc('cancel_order',{p_order_no:no,p_phone:ph});
+if(error){alert(error.message);return}
+alert('Order cancelled');location.hash==='#/orders'?route():(location.hash='#/orders')}
+setInterval(()=>{document.querySelectorAll('.cd').forEach(e=>{const t=Math.round((e.dataset.end-Date.now())/1000);if(t<=0){const n=e.closest('.note');n&&(n.textContent='The 10-minute cancellation time has ended.')}else e.textContent=Math.floor(t/60)+':'+String(t%60).padStart(2,'0')});
+if(window.QRCode)document.querySelectorAll('.qr:not([data-done])').forEach(e=>{e.dataset.done=1;new QRCode(e,{text:e.dataset.u,width:200,height:200})})},500);
 async function route(){const h=location.hash.slice(1)||'/',[path,qs]=h.split('?'),parts=path.split('/').filter(Boolean),key='/'+(parts[0]||''),q=new URLSearchParams(qs||'');
 $('#app').innerHTML=(V[key]||V['/'])(q,parts[1]);drawNav();window.scrollTo(0,0)}
 (async()=>{for(let i=0;i<7;i++){const s=document.createElement('span');s.className='pt';s.style.left=(8+i*14)+'%';s.style.animationDelay=(i*1.6)+'s';document.body.appendChild(s)}
