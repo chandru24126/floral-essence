@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Admin - Floral Essence Studio</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@700&family=Nunito:wght@400;700;800&display=swap">
+<style>
+:root{--ink:#3B2A2A;--mute:#6B5555;--rose:#C4504A;--rose2:#A63D38;--blush:#FDE8E0;--peach:#F9D3C0;--bg:#FFF7F2;--line:#E5C3B8}
+*{box-sizing:border-box}body{margin:0;font-family:Nunito,system-ui,sans-serif;color:var(--ink);background:var(--bg)}
+h1,h2,.hd{font-family:Caveat,cursive;font-weight:700;margin:0;line-height:1.05}h2{font-size:28px}
+.wrap{max-width:1200px;margin:auto;padding:16px}
+.btn,.b2,.chip{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0 18px;border-radius:999px;font:800 15px Nunito,sans-serif;cursor:pointer;border:2px solid var(--rose)}
+.btn{background:var(--rose);color:#fff}.b2{background:#fff;color:var(--rose2)}.chip{background:#fff;border-color:var(--line);color:var(--ink)}.chip.on{background:var(--rose);color:#fff;border-color:var(--rose)}
+.sm{min-height:36px;padding:0 12px;font-size:13px}.danger{border-color:#B91C1C;color:#B91C1C}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}.col{display:flex;flex-direction:column;gap:12px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px}
+.card{background:#fff;border-radius:18px;box-shadow:0 4px 14px rgba(196,80,74,.14);overflow:hidden}
+.in{display:block;width:100%;min-height:44px;padding:10px 12px;border:1.5px solid var(--line);border-radius:12px;font:15px Nunito,sans-serif;background:#fff;margin-top:4px}
+label.lb{font-weight:800;font-size:14px}.mt{color:var(--mute);font-size:13px}
+.note{background:#FEF3C7;color:#78350F;border-radius:12px;padding:10px;font-size:14px}.ok{background:#E4EFE0;color:#2F5A2B}.err{background:#FEE2E2;color:#7F1D1D}
+table{border-collapse:collapse;width:100%;background:#fff;font-size:13px}th{text-align:left;padding:10px 8px;border-bottom:2px solid var(--ink);white-space:nowrap}td{padding:8px;border-bottom:1px solid #EEDDD6;vertical-align:top}
+.tag{display:inline-block;border-radius:99px;padding:3px 10px;font-weight:800;font-size:12px;background:var(--blush);white-space:nowrap}
+.big{font-size:26px;font-weight:800}
+a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid #4F7A4B;outline-offset:2px}
+</style>
+</head>
+<body>
+<div id="app" class="wrap"></div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+<script src="config.js"></script>
+<script>
+const C=window.CFG,$=s=>document.querySelector(s),App=$('#app');
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const money=n=>'Rs. '+Number(n).toLocaleString('en-IN');
+const sb=supabase.createClient(C.SUPABASE_URL,C.SUPABASE_ANON_KEY);
+const PAYS=['Verification pending','Paid','Rejected','Awaiting payment','Cash pending','Cash received','Cancelled'];
+const DELS=['Placed','Packed','Shipped','Out for delivery','Delivered','Cancelled'];
+let orders=[],products=[],tab='dash',month='',F={pay:'',me:'',mo:'',q:''},edit=null,eimgs=[];
+const mk=d=>{d=new Date(d);return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')};
+const ml=k=>{const[y,m]=k.split('-').map(Number);return new Date(y,m-1,1).toLocaleString('en-IN',{month:'short',year:'numeric'})};
+const paid=o=>o.payment_status==='Paid'||o.payment_status==='Cash received';
+const sales=k=>orders.filter(o=>paid(o)&&mk(o.created_at)===k).reduce((a,o)=>a+o.total,0);
+const months=()=>{const s=new Set(orders.map(o=>mk(o.created_at)));s.add(mk(new Date()));return[...s].sort().reverse()};
+const mSel=(v,all,fn)=>`<select class="in" style="width:auto" aria-label="Month" onchange="${fn}">${all?'<option value="">All months</option>':''}${months().map(k=>`<option value="${k}" ${k===v?'selected':''}>${ml(k)}</option>`).join('')}</select>`;
+function loginView(msg=''){App.innerHTML=`<div class="card" style="max-width:420px;margin:40px auto;padding:24px"><div class="col"><div class="row"><img src="${esc(C.LOGO)}" alt="" style="width:56px;height:56px;border-radius:50%"><h1 style="font-size:38px">Admin</h1></div><div><label class="lb" for="em">Email</label><input class="in" id="em" type="email" autocomplete="username"></div><div><label class="lb" for="pw">Password</label><input class="in" id="pw" type="password" autocomplete="current-password" onkeydown="if(event.key==='Enter')login()"></div><div id="le">${msg}</div><button class="btn" onclick="login()">Sign in</button></div></div>`}
+async function login(){const{error}=await sb.auth.signInWithPassword({email:$('#em').value.trim(),password:$('#pw').value});if(error){$('#le').innerHTML='<div class="note err">Wrong email or password.</div>';return}boot()}
+async function out(){await sb.auth.signOut();loginView()}
+async function boot(){const{data:s}=await sb.auth.getSession();if(!s.session)return loginView();const{data:ok}=await sb.rpc('is_admin');if(!ok){await sb.auth.signOut();return loginView('<div class="note err">This account is not an admin.</div>')}await loadAll();draw()}
+async function loadAll(){const[a,b]=await Promise.all([sb.from('orders').select('*,order_items(name,qty)').order('created_at',{ascending:false}).limit(1000),sb.from('products').select('*').order('created_at',{ascending:false})]);orders=a.data||[];products=b.data||[];if(!month)month=mk(new Date())}
+function draw(){App.innerHTML=`<div class="row" style="justify-content:space-between"><div class="row"><img src="${esc(C.LOGO)}" alt="" style="width:44px;height:44px;border-radius:50%"><span class="hd" style="font-size:30px">Admin</span></div><button class="b2 sm" onclick="out()">Sign out</button></div><div class="row" style="margin:14px 0">${[['dash','Dashboard'],['ord','Orders'],['prod','Products']].map(([k,l])=>`<button class="chip ${tab===k?'on':''}" onclick="tab='${k}';draw()">${l}</button>`).join('')}</div><div id="tb"></div>`;({dash:vDash,ord:vOrd,prod:vProd})[tab]()}
+/* DASHBOARD */
+function vDash(){const[y,m]=month.split('-').map(Number),pk=mk(new Date(y,m-2,1)),s=sales(month),p=sales(pk),d=s-p,cnt=orders.filter(o=>mk(o.created_at)===month).length,pend=orders.filter(o=>o.payment_status==='Verification pending').length;
+const ks=[];for(let i=5;i>=0;i--)ks.push(mk(new Date(y,m-1-i,1)));const vals=ks.map(sales),mx=Math.max(...vals,1);
+const bars=ks.map((q,i)=>{const h=Math.round(vals[i]/mx*140),x=20+i*95;return `<rect x="${x}" y="${170-h}" width="60" height="${h}" rx="8" fill="${q===month?'#C4504A':'#F4A9A0'}"/><text x="${x+30}" y="${162-h}" text-anchor="middle" font-size="12" fill="#3B2A2A">${vals[i]?money(vals[i]):''}</text><text x="${x+30}" y="192" text-anchor="middle" font-size="12" fill="#6B5555">${ml(q)}</text>`}).join('');
+$('#tb').innerHTML=`<div class="row" style="margin-bottom:12px"><h2>Sales</h2>${mSel(month,false,"month=this.value;draw()")}</div><div class="grid"><div class="card" style="padding:16px"><div class="mt">Orders in ${ml(month)}</div><div class="big">${cnt}</div></div><div class="card" style="padding:16px"><div class="mt">Sales in ${ml(month)}</div><div class="big">${money(s)}</div><div class="mt">${d>=0?'+':'-'}${money(Math.abs(d))} vs ${ml(pk)}</div></div><div class="card" style="padding:16px"><div class="mt">Last month sales</div><div class="big">${money(p)}</div></div><div class="card" style="padding:16px"><div class="mt">Payments to verify</div><div class="big">${pend}</div>${pend?'<button class="b2 sm" onclick="F.pay=\'Verification pending\';F.mo=\'\';tab=\'ord\';draw()">Review now</button>':''}</div></div>
+<div class="card" style="padding:16px;margin-top:14px"><div class="mt">Sales per month (Paid UPI orders and COD orders marked Cash received, delivery fee included)</div><svg viewBox="0 0 600 205" style="width:100%;max-width:700px" role="img" aria-label="Monthly sales chart">${bars}</svg></div>`}
+/* ORDERS */
+function vOrd(){$('#tb').innerHTML=`<div class="row" style="margin-bottom:12px"><input class="in" style="flex:1;min-width:180px" id="q" placeholder="Search phone or Order ID" value="${esc(F.q)}" aria-label="Search" oninput="F.q=this.value;drawT()"><select class="in" style="width:auto" aria-label="Payment status" onchange="F.pay=this.value;drawT()"><option value="">All payment status</option>${PAYS.map(p=>`<option ${F.pay===p?'selected':''}>${p}</option>`).join('')}</select><select class="in" style="width:auto" aria-label="Payment method" onchange="F.me=this.value;drawT()"><option value="">UPI and COD</option><option ${F.me==='UPI'?'selected':''}>UPI</option><option ${F.me==='COD'?'selected':''}>COD</option></select>${mSel(F.mo,true,"F.mo=this.value;drawT()")}</div><div id="ot" style="overflow-x:auto"></div>`;drawT()}
+function drawT(){const q=F.q.toLowerCase(),rows=orders.filter(o=>(!F.pay||o.payment_status===F.pay)&&(!F.me||o.payment_method===F.me)&&(!F.mo||mk(o.created_at)===F.mo)&&(!q||o.phone.includes(q)||o.order_no.toLowerCase().includes(q)));
+$('#ot').innerHTML=rows.length?`<table><thead><tr>${['Order','Date','Customer','Phone','Address','Items','Qty','Delivery fee','Amount','Method','UPI Ref No','Payment status','Delivery status','Action'].map(h=>`<th>${h}</th>`).join('')}</tr></thead><tbody>${rows.map(o=>{const its=o.order_items||[],ac=[];
+if(o.payment_status==='Verification pending')ac.push(`<button class="btn sm" onclick="setPay('${o.id}','Paid')">Verify</button><button class="b2 sm danger" onclick="setPay('${o.id}','Rejected')">Reject</button>`);
+if(o.payment_method==='COD'&&o.payment_status==='Cash pending'&&o.delivery_status!=='Cancelled')ac.push(`<button class="btn sm" onclick="setPay('${o.id}','Cash received')">Cash received</button>`);
+return `<tr><td><strong>${esc(o.order_no)}</strong></td><td>${new Date(o.created_at).toLocaleString('en-IN',{dateStyle:'medium',timeStyle:'short'})}</td><td>${esc(o.name)}</td><td>${esc(o.phone)}</td><td style="min-width:200px">${esc(o.address)}, ${esc(o.state||'')} ${esc(o.pincode)}</td><td style="min-width:160px">${its.map(i=>esc(i.name)+' x '+i.qty).join('<br>')}</td><td>${its.reduce((a,i)=>a+i.qty,0)}</td><td>${money(o.delivery_fee)}</td><td><strong>${money(o.total)}</strong></td><td>${esc(o.payment_method)}</td><td>${o.payment_method==='UPI'?esc(o.upi_ref||'Not entered'):'Not applicable'}</td><td><span class="tag">${esc(o.payment_status)}</span></td><td><select class="in" style="min-width:140px;margin:0" aria-label="Delivery status for ${esc(o.order_no)}" onchange="setDel('${o.id}',this.value)">${DELS.map(d=>`<option ${d===o.delivery_status?'selected':''}>${d}</option>`).join('')}</select></td><td><div class="row" style="flex-wrap:nowrap">${ac.join('')}</div></td></tr>`}).join('')}</tbody></table>`:'<div class="note">No orders match.</div>'}
+async function upd(id,f){const{error}=await sb.from('orders').update(f).eq('id',id);if(error){alert('Could not update: '+error.message);return}await loadAll();tab==='ord'?drawT():draw()}
+const setPay=(id,s)=>{if(s==='Paid'&&!confirm('Check your bank SMS: does the UPI Ref No and amount match? Mark as Paid?'))return;upd(id,{payment_status:s})};
+const setDel=(id,s)=>upd(id,{delivery_status:s});
+/* PRODUCTS */
+function vProd(){const p=edit||{name:'',category:C.CATEGORIES[0],price:'',description:'',in_stock:true};
+$('#tb').innerHTML=`<div class="card" style="padding:16px"><div class="col"><h2>${edit?'Edit product':'Add product'}</h2><div><label class="lb" for="pn">Name</label><input class="in" id="pn" value="${esc(p.name)}"></div><div class="row"><div style="flex:1;min-width:160px"><label class="lb" for="pc">Category</label><select class="in" id="pc">${C.CATEGORIES.map(c=>`<option ${c===p.category?'selected':''}>${esc(c)}</option>`).join('')}</select></div><div style="flex:1;min-width:120px"><label class="lb" for="pp">Price (Rs.)</label><input class="in" id="pp" type="number" min="1" value="${esc(p.price)}"></div></div><div><label class="lb" for="pd">Description</label><textarea class="in" id="pd" rows="3">${esc(p.description)}</textarea></div><label class="row"><input type="checkbox" id="ps" ${p.in_stock?'checked':''}> <span class="lb">In stock</span></label><div><label class="lb" for="pf">Photos (you can pick several)</label><input class="in" id="pf" type="file" accept="image/*" multiple></div><div class="row" id="th"></div><div id="pm"></div><div class="row"><button class="btn" id="sv" onclick="saveP()">${edit?'Save changes':'Add product'}</button>${edit?'<button class="b2" onclick="edit=null;draw()">Cancel edit</button>':''}</div></div></div><h2 style="margin:18px 0 10px">Your products (${products.length})</h2><div class="grid">${products.map(x=>`<div class="card"><div style="height:140px;background:var(--blush);display:flex;align-items:center;justify-content:center">${x.images&&x.images[0]?`<img src="${esc(x.images[0])}" alt="" style="width:100%;height:100%;object-fit:cover">`:'<span class="mt">No photo</span>'}</div><div style="padding:10px 12px" class="col"><div><strong>${esc(x.name)}</strong><div class="mt">${esc(x.category)} &middot; ${money(x.price)}</div><span class="tag">${x.in_stock?'In stock':'Out of stock'}</span></div><div class="row"><button class="b2 sm" onclick="editP('${x.id}')">Edit</button><button class="b2 sm" onclick="stock('${x.id}',${!x.in_stock})">${x.in_stock?'Mark out of stock':'Mark in stock'}</button><button class="b2 sm danger" onclick="delP('${x.id}')">Delete</button></div></div></div>`).join('')||'<div class="note">No products yet.</div>'}</div>`;thumbs()}
+function thumbs(){$('#th').innerHTML=eimgs.map((u,i)=>`<div style="position:relative"><img src="${esc(u)}" alt="" style="width:72px;height:72px;object-fit:cover;border-radius:12px"><button class="chip" style="position:absolute;top:-8px;right:-8px;min-height:28px;padding:0 8px" aria-label="Remove photo" onclick="eimgs.splice(${i},1);thumbs()">x</button></div>`).join('')}
+function editP(id){edit=products.find(p=>p.id===id);eimgs=[...(edit.images||[])];draw();window.scrollTo(0,0)}
+async function stock(id,v){const{error}=await sb.from('products').update({in_stock:v}).eq('id',id);if(error)return alert(error.message);await loadAll();draw()}
+async function delP(id){if(!confirm('Delete this product?'))return;const{error}=await sb.from('products').delete().eq('id',id);if(error)return alert('This product is in past orders, so it cannot be deleted. Mark it out of stock instead.');await loadAll();draw()}
+async function up(f){const b=await new Promise((r,j)=>{const i=new Image();i.onerror=j;i.onload=()=>{const s=Math.min(1,1000/Math.max(i.width,i.height)),c=document.createElement('canvas');c.width=Math.round(i.width*s);c.height=Math.round(i.height*s);c.getContext('2d').drawImage(i,0,0,c.width,c.height);c.toBlob(r,'image/jpeg',.82)};i.src=URL.createObjectURL(f)});
+const p=Date.now()+'-'+Math.random().toString(36).slice(2,8)+'.jpg',{error}=await sb.storage.from('product-images').upload(p,b,{contentType:'image/jpeg'});if(error)throw error;return sb.storage.from('product-images').getPublicUrl(p).data.publicUrl}
+async function saveP(){const m=$('#pm'),btn=$('#sv'),name=$('#pn').value.trim(),price=parseInt($('#pp').value,10);
+if(name.length<2||!(price>0)){m.innerHTML='<div class="note err">Enter a name and a price above 0.</div>';return}
+btn.disabled=true;btn.textContent='Saving...';m.innerHTML='';
+try{const imgs=[...eimgs];for(const f of $('#pf').files)imgs.push(await up(f));
+const row={name,category:$('#pc').value,price,description:$('#pd').value.trim(),in_stock:$('#ps').checked,images:imgs};
+const{error}=edit?await sb.from('products').update(row).eq('id',edit.id):await sb.from('products').insert(row);if(error)throw error;
+edit=null;eimgs=[];await loadAll();draw()}catch(e){m.innerHTML=`<div class="note err">Could not save: ${esc(e.message||e)}</div>`;btn.disabled=false;btn.textContent=edit?'Save changes':'Add product'}}
+boot();
+</script>
+</body>
+</html>
