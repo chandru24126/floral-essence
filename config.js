@@ -1,8 +1,8 @@
-// Edit these values. Only the PUBLIC anon key goes here, never the service_role key.
+// Only the PUBLIC publishable key goes here, never the secret key.
 window.CFG = {
   SUPABASE_URL: "https://oxqtvzrhenjbaxdbyjim.supabase.co",
   SUPABASE_ANON_KEY: "sb_publishable_cbjAH_DGZ7DkCFfj0ssLgA_Xq4_ASLr",
-  SHOP_UPI_ID: "ranjiniashok2023@okhdfcbank",   // customer UPI payments go to this ID
+  SHOP_UPI_ID: "ranjiniashok2023@okhdfcbank",
   NAME: "Floral Essence Studio",
   PHONE: "+91 93606 36917",
   WHATSAPP: "919360636917",
