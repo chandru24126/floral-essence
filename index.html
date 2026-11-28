@@ -4,10 +4,16 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Floral Essence Studio</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#C4504A">
+<link rel="apple-touch-icon" href="assets/icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Floral Essence">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@700&family=Nunito:wght@400;700;800&display=swap">
 <style>
 :root{--ink:#3B2A2A;--mute:#6B5555;--rose:#C4504A;--rose2:#A63D38;--blush:#FDE8E0;--peach:#F9D3C0;--leaf:#4F7A4B;--bg:#FFF7F2;--line:#E5C3B8}
-*{box-sizing:border-box}body{margin:0;font-family:Nunito,system-ui,sans-serif;color:var(--ink);background:var(--bg);overflow-x:hidden}
+[hidden]{display:none!important}*{box-sizing:border-box}body{margin:0;font-family:Nunito,system-ui,sans-serif;color:var(--ink);background:var(--bg);overflow-x:hidden}
 h1,h2,.hd{font-family:Caveat,cursive;font-weight:700;margin:0;line-height:1.05}h1{font-size:clamp(36px,7vw,60px)}h2{font-size:30px}
 a{color:var(--rose2)}.wrap{max-width:1000px;margin:auto;padding:16px 16px 160px;position:relative;z-index:1}
 .btn,.b2,.chip,.nv{display:inline-flex;align-items:center;justify-content:center;min-height:48px;padding:0 22px;border-radius:999px;font:800 16px Nunito,sans-serif;text-decoration:none;cursor:pointer;border:2px solid var(--rose)}
@@ -70,7 +76,7 @@ function add(id,q=1){const p=products.find(x=>x.id===id);if(!p||!p.in_stock)retu
 function chg(id,d){const i=cart.find(x=>x.id===id);if(!i)return;i.qty+=d;if(i.qty<1)cart=cart.filter(x=>x.id!==id);save();route()}
 const V={
 '/':()=>{const ads=C.ADS.map(a=>`<a class="ad" href="${wa}${encodeURIComponent(a.title)}" target="_blank" rel="noopener" aria-label="${esc(a.title)}: order now"><img src="${esc(a.img)}" alt="${esc(a.title)}" onerror="this.parentNode.classList.add('nf');this.remove()"><span class="fb"><strong>${esc(a.title)}</strong><span>${esc(a.sub)}</span></span></a>`).join('');
-return `<section class="hero"><img src="${esc(C.LOGO)}" alt="${esc(C.NAME)} logo"><div class="col" style="flex:1;min-width:230px"><span class="tag" style="align-self:flex-start">Handmade in India</span><h1>Handmade florals for little princesses</h1><div>Baby headbands, floral headbands and hair accessories. Shipping across the globe.</div><div class="row"><a class="btn" href="#/shop">Shop now</a><a class="b2" href="${wa}" target="_blank" rel="noopener">Custom order</a></div></div></section>
+return `<section class="hero"><img src="${esc(C.LOGO)}" alt="${esc(C.NAME)} logo"><div class="col" style="flex:1;min-width:230px"><span class="tag" style="align-self:flex-start">Handmade in India</span><h1>Handmade florals for little princesses</h1><div>Baby headbands, floral headbands and hair accessories. Shipping across the globe.</div><div class="row"><a class="btn" href="#/shop">Shop now</a><a class="b2" href="${wa}" target="_blank" rel="noopener">Custom order</a>${instBtn()}</div></div></section>
 <div class="mq" aria-label="Offers"><div class="tr">${ads}${ads}</div></div>
 <div class="row">${C.CATEGORIES.map(c=>`<a class="chip" href="#/shop?c=${encodeURIComponent(c)}">${esc(c)}</a>`).join('')}</div>
 <h2 style="margin:22px 0 12px">Our favourites</h2><div class="grid">${products.slice(0,4).map(card).join('')||'<p class="mt">Products will appear here soon.</p>'}</div>`+foot()},
@@ -96,7 +102,7 @@ ${f('st','State',p.state||'Maharashtra')}${f('pc','Pincode',p.pincode,'inputmode
 '/profile':()=>{const p=prof();if(!user)return `<h1>Profile</h1><p>Sign in to save your details and see your orders.</p>${gbtn}`+foot();
 return `<h1>Profile</h1><div class="col" style="margin-top:14px"><div><strong>${esc(user.user_metadata?.full_name||'')}</strong><div class="mt">${esc(user.email)}</div></div>
 <div><label class="lb" for="pp">Saved phone</label><input class="in" id="pp" value="${esc(p.phone||'')}" maxlength="10" inputmode="numeric"></div><div><label class="lb" for="pa">Saved address</label><textarea class="in" id="pa" rows="3">${esc(p.address||'')}</textarea></div>
-<button class="btn" onclick="saveProf()">Save details</button><button class="b2" onclick="signOut()">Sign out</button></div>`+foot()}};
+<button class="btn" onclick="saveProf()">Save details</button><button class="b2" onclick="signOut()">Sign out</button>${instBtn()}</div>`+foot()}};
 function saveProf(){try{localStorage.setItem('fe_prof',JSON.stringify({...prof(),phone:$('#pp').value.trim(),address:$('#pa').value.trim()}))}catch(e){}alert('Saved')}
 const st=o=>`<div class="card" style="padding:14px"><div class="row" style="justify-content:space-between"><strong>${esc(o.order_no)}</strong><span class="tag">${esc(o.delivery_status)}</span></div><div>${(o.items||o.order_items||[]).map(i=>esc(i.name)+' x '+i.qty).join(', ')}</div><div class="mt">${esc(o.payment_method)} &middot; ${esc(o.payment_status)} &middot; ${money(o.total)}${o.upi_ref?'<br>UPI Ref No: '+esc(o.upi_ref):''}</div>${act(o)}</div>`;
 async function loadOrders(){const el=$('#ol');if(!el)return;if(!sb){el.textContent='Add your Supabase details in config.js';return}
@@ -131,8 +137,15 @@ if(error){alert(error.message);return}
 alert('Order cancelled');location.hash==='#/orders'?route():(location.hash='#/orders')}
 setInterval(()=>{document.querySelectorAll('.cd').forEach(e=>{const t=Math.round((e.dataset.end-Date.now())/1000);if(t<=0){const n=e.closest('.note');n&&(n.textContent='The 10-minute cancellation time has ended.')}else e.textContent=Math.floor(t/60)+':'+String(t%60).padStart(2,'0')});
 if(window.QRCode)document.querySelectorAll('.qr:not([data-done])').forEach(e=>{e.dataset.done=1;new QRCode(e,{text:e.dataset.u,width:200,height:200})})},500);
+let dp=null;const ios=/iphone|ipad|ipod/i.test(navigator.userAgent),inApp=()=>matchMedia('(display-mode: standalone)').matches||navigator.standalone;
+const instBtn=()=>`<button class="b2 inst" onclick="installApp()" ${(dp||ios)&&!inApp()?'':'hidden'}>Install app</button>`;
+const showInst=()=>document.querySelectorAll('.inst').forEach(x=>x.hidden=!((dp||ios)&&!inApp()));
+window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();dp=e;showInst()});
+window.addEventListener('appinstalled',()=>{dp=null;showInst()});
+async function installApp(){if(dp){dp.prompt();await dp.userChoice;dp=null;showInst()}else alert('On iPhone: tap the Share button in Safari, then choose "Add to Home Screen".')}
+if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});
 async function route(){const h=location.hash.slice(1)||'/',[path,qs]=h.split('?'),parts=path.split('/').filter(Boolean),key='/'+(parts[0]||''),q=new URLSearchParams(qs||'');
-$('#app').innerHTML=(V[key]||V['/'])(q,parts[1]);drawNav();window.scrollTo(0,0)}
+$('#app').innerHTML=(V[key]||V['/'])(q,parts[1]);drawNav();showInst();window.scrollTo(0,0)}
 (async()=>{for(let i=0;i<7;i++){const s=document.createElement('span');s.className='pt';s.style.left=(8+i*14)+'%';s.style.animationDelay=(i*1.6)+'s';document.body.appendChild(s)}
 if(sb){const{data:s}=await sb.auth.getSession();user=s.session?.user||null;sb.auth.onAuthStateChange((_e,x)=>{user=x?.user||null;route()});
 const{data}=await sb.from('products').select('*').order('created_at',{ascending:false});products=data||[]}
