@@ -2,8 +2,8 @@
 window.CFG = {
   SUPABASE_URL: "https://oxqtvzrhenjbaxdbyjim.supabase.co",
   SUPABASE_ANON_KEY: "sb_publishable_cbjAH_DGZ7DkCFfj0ssLgA_Xq4_ASLr",
-  SHOP_UPI_ID: "ranjiniashok2023@okhdfcbank",
-  NAME: "Floral Essence Studio",
+  SHOP_UPI_ID: "8098585071@ptyes",
+  NAME: "chandru",
   PHONE: "+91 93606 36917",
   WHATSAPP: "919360636917",
   INSTAGRAM: "https://www.instagram.com/floral_essence_studio?obrf=NjdmYTR3bzMyN3Zi",
